@@ -1,5 +1,15 @@
-# Helmet Detection Using Python
+---
+title: Helmet Detection Flask App
+emoji: 🛡️
+colorFrom: blue
+colorTo: green
+sdk: docker
+pinned: false
+---
 
+# Helmet Detection Flask Application
+
+This is a Flask-based helmet detection application running on Hugging Face Spaces.
 ## Description
 IT's a idea developed using Python that detects whether a motorbike rider is wearing a helmet or not. It uses computer vision techniques to analyze images or video and helps improve road safety.
 
