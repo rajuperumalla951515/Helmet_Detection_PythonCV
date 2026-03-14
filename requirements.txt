@@ -1,0 +1,6 @@
+opencv-python
+cvzone
+ultralytics
+Flask
+Flask-Cors
+pyttsx3

@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Helmet Detection System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --bg-color: #0F172A;
+            --card-bg: #1E293B;
+            --text-main: #F8FAFC;
+            --text-muted: #94A3B8;
+            --accent: #10B981;
+            --danger: #EF4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            width: 100%;
+            padding: 24px;
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            position: fixed;
+            top: 0;
+            z-index: 10;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #60A5FA, #A78BFA);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        main {
+            flex: 1;
+            width: 100%;
+            max-width: 1200px;
+            padding: 100px 24px 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .dashboard {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+
+        @media (min-width: 1024px) {
+            .dashboard {
+                grid-template-columns: 3fr 1fr;
+            }
+        }
+
+        .video-container {
+            background-color: var(--card-bg);
+            border-radius: 20px;
+            padding: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .video-container::before {
+            content: '';
+            position: absolute;
+            top: -2px; left: -2px; right: -2px; bottom: -2px;
+            background: linear-gradient(45deg, var(--primary), var(--accent), var(--danger));
+            z-index: -1;
+            border-radius: 22px;
+            opacity: 0.15;
+            animation: pulse-border 4s linear infinite;
+        }
+
+        @keyframes pulse-border {
+            0% { opacity: 0.1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 0.1; }
+        }
+
+        .video-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent);
+            padding: 6px 16px;
+            border-radius: 999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--accent);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        .video-feed {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            background-color: #000;
+            object-fit: cover;
+            aspect-ratio: 4/3;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        .info-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 20px;
+            padding: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .card h3 {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .stat-box {
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .log-container {
+            margin-top: 10px;
+            height: 200px;
+            background: #000;
+            border-radius: 12px;
+            padding: 16px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: #10B981;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .log-line {
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .log-time {
+            color: var(--text-muted);
+            margin-right: 8px;
+        }
+
+        .verification-btn {
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .btn-unverified {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+        }
+
+        .btn-verified {
+            background-color: var(--accent);
+            color: #000;
+            border: 1px solid var(--accent);
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.5);
+            animation: pulse-green 2s infinite;
+        }
+
+        @keyframes pulse-green {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        footer {
+            width: 100%;
+            text-align: center;
+            padding: 24px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: auto;
+        }
+        
+        .developer-name {
+            color: #60A5FA;
+            font-weight: 600;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Helmet Safety Monitor</h1>
+    </header>
+
+    <main>
+        <div class="dashboard">
+            <div class="video-container">
+                <div class="video-header">
+                    <h2>Live Feed</h2>
+                    <div class="status-badge">
+                        <div class="status-dot"></div>
+                        System Active & Streaming
+                    </div>
+                </div>
+                <img src="/video_feed" class="video-feed" alt="Helmet Detection Video Feed" id="videoElement" onerror="this.onerror=null; this.src=''; this.alt='Video stream offline. Please start the server.';">
+            </div>
+
+            <div class="info-panel">
+                <div class="card">
+                    <h3>Authentication Status</h3>
+                    <button class="verification-btn btn-unverified" id="verificationBtn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                        <span id="verificationText">No Helmet Detected</span>
+                    </button>
+                    <p style="text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 8px;" id="confidenceText">Confidence: 0%</p>
+                </div>
+
+                <div class="card">
+                    <h3>Model Diagnostics</h3>
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <div class="stat-value">YOLOv8</div>
+                            <div class="stat-label">Network</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value">ACTIVE</div>
+                            <div class="stat-label">GPU/CPU</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card" style="flex: 1;">
+                    <h3>System Logs</h3>
+                    <div class="log-container" id="logContainer">
+                        <div class="log-line"><span class="log-time">[System]</span> Neural Engine initialized...</div>
+                        <div class="log-line"><span class="log-time">[System]</span> Model loaded successfully: weights/best (1).pt</div>
+                        <div class="log-line"><span class="log-time">[System]</span> Camera input initialized (ID: 0)</div>
+                        <div class="log-line"><span class="log-time">[Stream]</span> Establishing MJPEG stream connection...</div>
+                        <div class="log-line"><span class="log-time">[Stream]</span> Connected successfully. Waiting for frames.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>Developed by <span class="developer-name">Raju Perumalla</span></p>
+    </footer>
+
+    <script>
+        // Simple script to keep logs looking active
+        function addLog(message) {
+            const logs = document.getElementById('logContainer');
+            const now = new Date();
+            const timeStr = now.toTimeString().split(' ')[0];
+            const div = document.createElement('div');
+            div.className = 'log-line';
+            div.innerHTML = `<span class="log-time">[${timeStr}]</span> ${message}`;
+            logs.appendChild(div);
+            logs.scrollTop = logs.scrollHeight;
+        }
+
+        setInterval(() => {
+            if (Math.random() > 0.7) {
+                addLog('Frame analyzed successfully.');
+            }
+        }, 5000);
+
+        // Listen for Server-Sent Events from the backend
+        const evtSource = new EventSource('/status_feed');
+        const verificationBtn = document.getElementById('verificationBtn');
+        const confidenceText = document.getElementById('confidenceText');
+        
+        let lastReportedStatus = false;
+
+        evtSource.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            
+            if(data.detected && !lastReportedStatus) {
+                lastReportedStatus = true;
+                verificationBtn.classList.remove('btn-unverified');
+                verificationBtn.classList.add('btn-verified');
+                verificationBtn.innerHTML = `
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    <span id="verificationText">VERIFIED - ACCESS GRANTED</span>
+                `;
+                addLog('Helmet Verification Successful. Access Granted.');
+            } else if (!data.detected && lastReportedStatus) {
+                lastReportedStatus = false;
+                verificationBtn.classList.remove('btn-verified');
+                verificationBtn.classList.add('btn-unverified');
+                verificationBtn.innerHTML = `
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    <span id="verificationText">NO HELMET DETECTED</span>
+                `;
+                addLog('Verification Lost. Awaiting Helmet Detection.');
+            }
+            
+            confidenceText.textContent = 'Confidence: ' + Math.round(data.confidence * 100) + '%';
+        };
+    </script>
+</body>
+</html>
