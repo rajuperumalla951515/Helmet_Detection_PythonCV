@@ -1,0 +1,5 @@
+opencv-python
+numpy
+imutils
+matplotlib
+scikit-learn
