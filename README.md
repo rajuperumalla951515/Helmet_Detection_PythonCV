@@ -1,4 +1,4 @@
-# Helmet Detection Flask Application 🛡️
+# Helmet Detection Flask Application
 
 A Python-based computer vision application to detect whether motorbike riders are wearing helmets using OpenCV. Runs on Hugging Face Spaces.
 
